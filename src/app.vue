@@ -13,6 +13,7 @@
       <div class="small text-muted text-center">
         <div>
           From Berlin with ♥
+          <a href="https://github.com/oleics/deluge-song-merger">GitHub</a>
         </div>
         <div class="small">
           Copyright (c) 2019 Oliver Leics &lt;oliver.leics@gmail.com&gt;
