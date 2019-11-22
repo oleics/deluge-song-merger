@@ -76,8 +76,10 @@
 
 <script>
 
-var SELECTOR_INSTRUMENT_CHILDS = 'song > instruments > sound, song > instruments > kit';
+// dumbly copying audioClip and autoTrack leads to E170 on the D
+var SELECTOR_INSTRUMENT_CHILDS = 'song > instruments > sound, song > instruments > kit, song > instruments > midiChannel, song > instruments > cvChannel';
 var SELECTOR_INSTRUMENT_CLIPS = 'song > sessionClips > instrumentClip';
+
 var SELECTOR_SESSION_CLIPS = 'song > sessionClips';
 var SELECTOR_INSTRUMENTS = 'song > instruments';
 
@@ -191,9 +193,32 @@ export default {
           var instrumentChilds = [];
           var instrumentClips = [];
           for(let i = 0, len = files.length, f; i < len, f = files[i]; i++) {
-            instrumentChilds.push.apply(instrumentChilds, f.doc.querySelectorAll(SELECTOR_INSTRUMENT_CHILDS));
-            instrumentClips.push.apply(instrumentClips, f.doc.querySelectorAll(SELECTOR_INSTRUMENT_CLIPS));
+            var ichilds = Array.from(f.doc.querySelectorAll(SELECTOR_INSTRUMENT_CHILDS));
+            var iclips = Array.from(f.doc.querySelectorAll(SELECTOR_INSTRUMENT_CLIPS));
+
+            // console.log('-- doc --');
+            // console.log(f.doc);
+            // if(ichilds.length !== iclips.length) {
+            //   console.log('-- instruments ('+ichilds.length+') --');
+            //   ichilds.forEach(function(node){
+            //     console.log(node);
+            //   });
+            //   console.log('-- clips ('+iclips.length+') --');
+            //   iclips.forEach(function(node){
+            //     console.log(node);
+            //   });
+            // }
+
+            if(ichilds.length > iclips.length) {
+              this.state.error = new Error('Ops, an assertation is broken: more instruments than clips');
+              return;
+            }
+
+            instrumentChilds.push.apply(instrumentChilds, ichilds);
+            instrumentClips.push.apply(instrumentClips, iclips);
           }
+          // console.log('-- all instruments ('+instrumentChilds.length+') --');
+          // console.log('-- all clips ('+instrumentClips.length+') --');
 
           var instruments = mergeInto.doc.querySelector(SELECTOR_INSTRUMENTS);
           if(instruments == null) {
